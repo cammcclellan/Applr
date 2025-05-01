@@ -1,9 +1,9 @@
 Package: ALR
-Title: What the Package Does (One Line, Title Case)
+Title: Useful Commands For Math425 at BYUI
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+    person("Cameron", "McClellan", , "cameron.m.mcclellan@gmail.com", role = c("aut", "cre"))
+Description: A package to make life in Math425 a little easier. Combines various functions and provides functions that should hopefully make life easier..
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
