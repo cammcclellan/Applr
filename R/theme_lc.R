@@ -1,4 +1,9 @@
+#' Theme based off of Lauren Condie's work
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 theme_lc <- function(){
 
   theme_minimal() %+replace%
