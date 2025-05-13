@@ -1,10 +1,8 @@
 #' Plot a 3D-grapheable linear model
 #'
-#' @param model A saved linear model
-#' Ex. df <- lm(y ~ x + x2, data)
+#' @param model A saved linear model with 2 predictor variables
 #' @param n Number of evaluations
 #' @param colors Colors used for the gradient scale
-#' colors = c(color1, color2, etc.)
 #'
 #' @returns A 3D graph in the viewer section
 #' @export
