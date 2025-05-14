@@ -31,11 +31,6 @@ scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){
 
   df <- setNames(data.frame(y,x1,x2), c(y_name, x1_name, x2_name))
 
-
-
-
-
-
   if (!is.numeric(x1))
     if (!is.factor(x1))
       x1 <- as.factor(x1)
