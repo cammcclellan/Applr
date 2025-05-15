@@ -18,7 +18,7 @@ scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){
   vars <- all.vars(formula(model))
 
   if(length(vars) > 3)
-    stop(message='Not 3D Graphable, Reduce lm to 2 x variables')
+    stop(message='Not 3D Graphable, Reduce lm to 2 predictor variables')
 
 
   y <- model$model[1][[1]]
