@@ -1,6 +1,6 @@
-model <- lm(width ~ length + sex, KidsFeet)
+model <- lm(width ~ length, KidsFeet)
 
-slice_2d <- function(model,xaxis=NA,n=100, ...){
+geom_slice <- function(model,xaxis=NA,n=100, ...){
 
   if (!inherits(model, 'lm'))
     stop(message = 'Model must be in lm format')
@@ -44,12 +44,17 @@ slice_2d <- function(model,xaxis=NA,n=100, ...){
 
   new_data$preds <- predict(model, newdata = new_data)
 
-  plot(new_data[[xaxis]], new_data$preds,
-       type = "l",
-       xlab = xaxis,
-       ylab = paste("Predicted", y_name),
-       ...)
+  geom_line(
+    data=new_data,
+    mapping = aes(x=xaxis,y=preds),
+    color=color,
+    linewidth=1,
+    inherit.aes = FALSE
+  )
 
 }
 
-slice_2d(model,xaxis = 'length', sex='B')
+ggplot(KidsFeet, aes(x=length,
+                     y=width))+
+  geom_point()+
+  geom_slice(model, xaxis='length')
