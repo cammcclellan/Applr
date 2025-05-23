@@ -1,3 +1,5 @@
+
+library(mosaic)
 model <- lm(width ~ length + sex, KidsFeet)
 
 geom_slice <- function(model,xaxis=NA,n=100, color = 'skyblue',linewidth=2, linetype = 'solid', alpha = 1,...){
@@ -17,7 +19,7 @@ geom_slice <- function(model,xaxis=NA,n=100, color = 'skyblue',linewidth=2, line
 
   other_vars <- setdiff(names(model$model), c(y_name, xaxis))
 
-  if(length(other_vars > 0)) {
+  if(length(other_vars) > 0) {
 
     dots <- list(...)
 
@@ -55,13 +57,13 @@ geom_slice <- function(model,xaxis=NA,n=100, color = 'skyblue',linewidth=2, line
   new_data$preds <- predict(model, newdata = new_data)
 
   eval(parse(text=paste0('geom_line(',
-    'data=new_data,',
-    'mapping = aes(x=',xaxis,',y=preds),',
-    'color = color,',
-    'linewidth= linewidth,',
-    'alpha = alpha,',
-    'linetype = linetype,',
-    'inherit.aes = FALSE)'
+                         'data=new_data,',
+                         'mapping = aes(x=',xaxis,',y=preds),',
+                         'color = color,',
+                         'linewidth= linewidth,',
+                         'alpha = alpha,',
+                         'linetype = linetype,',
+                         'inherit.aes = FALSE)'
   )))
 
 }
@@ -69,4 +71,6 @@ geom_slice <- function(model,xaxis=NA,n=100, color = 'skyblue',linewidth=2, line
 ggplot(KidsFeet, aes(x=length,
                      y=width))+
   geom_point()+
-  geom_slice(model, xaxis='length', sex='B')
+  facet_wrap(~sex)+
+  geom_slice(model)
+
