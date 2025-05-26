@@ -72,5 +72,6 @@ ggplot(KidsFeet, aes(x=length,
                      y=width))+
   geom_point()+
   facet_wrap(~sex)+
-  geom_slice(model)
+  geom_slice(model, sex='B')+
+  geom_slice(model,sex='G')
 
