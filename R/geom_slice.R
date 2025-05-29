@@ -135,7 +135,7 @@ ggplot(Utilities, aes(x=temp,
   geom_point()+
   facet_wrap(~month)+
   geom_slice(model, xaxis='temp')+
-  stat_function(fun = function(x) b[1]+b[2]*x+b[3]*6)
+  stat_function(fun = function(x) b[1]+b[2]*x+b[3]*1)
 
 
 
