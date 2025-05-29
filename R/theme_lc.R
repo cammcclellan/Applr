@@ -21,7 +21,8 @@ theme_lc <- function(){
     panel.grid.major = element_line(color = "#D3B593", linewidth = .06),
     axis.text.x = element_text(color = "#78776C"),
     axis.text.y = element_text(color = "#78776C"),
-    panel.grid.minor = element_blank()
+    panel.grid.minor = element_blank(),
+    complete=TRUE
   )
 }
 

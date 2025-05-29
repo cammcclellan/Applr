@@ -1,6 +1,6 @@
 
 library(mosaic)
-model <- lm(width ~ length + sex, KidsFeet)
+model <- lm(totalbill ~ temp + ccf + temp:ccf + month, Utilities)
 
 geom_slice <- function(model,xaxis=NA,n=100, color = 'skyblue',linewidth=2, linetype = 'solid', alpha = 1,...){
 
@@ -68,10 +68,11 @@ geom_slice <- function(model,xaxis=NA,n=100, color = 'skyblue',linewidth=2, line
 
 }
 
-ggplot(KidsFeet, aes(x=length,
-                     y=width))+
+ggplot(Utilities, aes(x=temp,
+                      y=totalbill))+
   geom_point()+
-  facet_wrap(~sex)+
-  geom_slice(model, sex='B')+
-  geom_slice(model,sex='G')
+  geom_slice(model, xaxis='temp', month=1)+
+  facet_wrap(~month)+
+  geom_smooth(method='lm',formula=y~x)
+
 
