@@ -3,59 +3,69 @@ library(mosaic)
 model <- lm(totalbill ~ temp + month, Utilities)
 
 StatSlice <- ggproto("StatSlice", Stat,
-                     compute_group = function(data, scales, model, xaxis = NULL, n = 100, ...) {
+                     compute_group = function(data, scales, model,facet = NULL, n = 100, ...) {
 
-                       if (!inherits(model, "lm")) stop("Model must be an lm object")
+                       if (!inherits(model, "lm"))
+                         stop("Model must be an lm object")
 
-                       model_vars <- names(model$model)
-                       y_name <- model_vars[1]
-                       xaxis <- xaxis %||% model_vars[2]
+                       model_vars <- names(model$model)[-1]
+                       xaxis <- all.vars(formula(model))[2]
 
-                       x1 <- model$model[[xaxis]]
-                       other_vars <- setdiff(model_vars, c(y_name, xaxis))
+                       xvals <- model$model[[xaxis]]
+                       x1 <- seq(min(xvals, na.rm=TRUE),max(xvals,na.rm=TRUE),length.out=n)
+                       x_data <- data.frame(setNames(list(x1),xaxis))
+
+                       other_vars <- setdiff(model_vars, c(xaxis, facet))
 
                        dots <- list(...)
 
-                       # means_list <- lapply(other_vars, function(var) {
-                       #   if (var %in% names(data)) {
-                       #     unique_val <- unique(data[[var]])
-                       #     if (length(unique_val) > 1){
-                       #       warning(paste("Multiple values for", var, "in facet group"))}
-                       #     unique_val[1]
-                       #   } else {
-                       #     col <- model$model[[var]]
-                       #   }
-                       # })
-
-                       means_list <-
+                       means_list <- lapply(other_vars, function(var) {
+                           if (!is.null(dots[[var]])) {
+                             message('Slice variable not specified:\n Use \"var_name\" = value to specify')
+                             dots[[var]]
+                           } else {
+                             col <- model$model[[var]]
+                             if (is.numeric(col)) {
+                               message('Slice value not specified - Used mean of ', var)
+                               mean(col, na.rm = TRUE)
+                             } else if (is.factor(col)) {
+                               message('Slice value not specified - Used first level of ', var)
+                               levels(col)[1]
+                             } else {
+                               stop(paste("Unsupported variable type for:", var))
+                             }
+                           }
+                         })
 
                        x_names <- as.data.frame(as.list(setNames(means_list, other_vars)))
-                       vals <- seq(min(x1, na.rm = TRUE), max(x1, na.rm = TRUE), length.out = n)
-                       new_data <- data.frame(setNames(list(vals), xaxis))
 
                        if (length(other_vars) > 0) {
-                         new_data <- cbind(new_data, x_names[rep(1, n), , drop = FALSE])
+                         new_data <- cbind(x_data, x_names[rep(1, n), , drop = FALSE])
+                       } else {
+                         new_data <- x_data
                        }
 
                        new_data$y <- predict(model, newdata = new_data)
-                       new_data$x <- new_data[[xaxis]]
+                       names(new_data)[names(new_data) == xaxis] <- "x"
+                       new_data <- new_data[, c("x", "y")]
                        new_data
                      }
+
 )
+
 
 GeomSlice <- ggproto('GeomSlice',GeomLine,
                      default_aes = aes(color = "skyblue", linewidth = 1, linetype = "solid", alpha = 1)
                      )
 
 
-geom_slice <- function(model, xaxis = NULL, n = 100,inherit.aes = TRUE, ...){
+geom_slice <- function(model, facet=NULL, n = 100,inherit.aes = TRUE, ...){
   layer(
     stat = StatSlice,
     geom = GeomSlice,
     position = "identity",
     inherit.aes = inherit.aes,
-    mapping = aes(x = after_stat(x), y = after_stat(y)),
-    params = list(model = model, xaxis = xaxis, n = n, ...)
+    params = list(model = model, n = n, ...)
   )
 }
 
@@ -65,7 +75,7 @@ ggplot(Utilities, aes(x=temp,
                       y=totalbill))+
   geom_point()+
   facet_wrap(~month)+
-  geom_slice(model, xaxis='temp')+
+  geom_slice(model=model,facet='month')+
   stat_function(fun = function(x) b[1]+b[2]*x+b[3]*12)+
   geom_smooth(method='lm',formula=y~x,se=F)
 
