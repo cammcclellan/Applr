@@ -54,7 +54,7 @@ geom_slice <- function(
 
 b <- coef(model)
 
-ggplot(Utilities, aes(x=temp,
+p <- ggplot(Utilities, aes(x=temp,
                       y=totalbill))+
   geom_point()+
   facet_wrap(~month)+

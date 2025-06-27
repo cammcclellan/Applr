@@ -1,5 +1,19 @@
-model <- lm(width ~ length + birthmonth + sex, KidsFeet)
-
+#' 2D Slicer
+#'
+#' Take a linear model and display a 2D slice in base R
+#'
+#' @param model A linear model
+#' @param xaxis A non-required specification of the xaxis variable; default is first x var in lm
+#' @param n Number of displayed points; default is 100
+#' @param ...
+#'
+#' @returns A 2D graph of a sliced model
+#'
+#' @examples
+#' model = lm(width ~ length, KidsFeet)
+#' slice_2d(model)
+#'
+#' @export
 slice_2d <- function(model,xaxis=NA,n=100, ...){
 
   if (!inherits(model, 'lm'))
@@ -59,8 +73,25 @@ slice_2d <- function(model,xaxis=NA,n=100, ...){
 
 }
 
-slice_2d(model)
 
+#' 2D Slice to R Plot
+#'
+#' Take a slice from a linear model and add the displayed graph to a preexisting R plot
+#'
+#' @param model A linear model
+#' @param xaxis A non-required specification of the xaxis variable; default is first x var in lm
+#' @param n Number of displayed points; default is 100
+#' @param ...
+#'
+#' @returns A line added to a preexisting R plot displaying a 2D graphable slice of an HD model
+#'
+#'
+#' @examples
+#' kids <- lm(width ~ length + birthmonth, data = KidsFeet)
+#' plot(width ~ length, data = KidsFeet)
+#' add_slice_2d(kids)
+#'
+#' @export
 add_slice_2d <- function(model,xaxis=NA,n=100, ...){
 
   if (!inherits(model, 'lm'))
@@ -116,7 +147,3 @@ add_slice_2d <- function(model,xaxis=NA,n=100, ...){
 
 }
 
-
-kids <- lm(width ~ length + birthmonth, data = KidsFeet)
-plot(width ~ length, data = KidsFeet)
-add_slice_2d(kids)
