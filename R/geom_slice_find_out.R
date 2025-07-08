@@ -1,0 +1,113 @@
+
+library(mosaic)
+
+StatSlice <- ggproto(
+  "StatSlice",
+  StatIdentity,
+  required_aes = c('x','y'),
+  setup_data = function(self, data, params){
+    data
+  },
+  get_default_value = function(model, varname) {
+    fdata <- model$model[[varname]]
+
+    if (is.numeric(fdata)) {
+      return(mean(fdata, na.rm = TRUE))
+    } else if (is.factor(fdata) || is.character(fdata)) {
+      freq <- table(fdata)
+
+      val <- names(freq)[which.max(freq)]
+      if (is.factor(fdata)) val <- factor(val, levels = levels(fdata))
+      return(val)
+    } else {
+      stop("Unsupported column type: ", class(data))
+    }
+  },
+  compute_layer = function(self, data, params, layout){
+    params$facet_layout <- layout$layout
+    mapping <- params$mapping
+    ggproto_parent(Stat,self)$compute_layer(data,params,layout)
+  },
+  compute_panel = function(data, scales, facet_layout, model, params,mapping, n=100){
+    facet_vars <- setdiff(names(facet_layout),
+                          c("ROW",'COL', "SCALE_X", "SCALE_Y", "COORD"))
+
+    data <- facet_layout |>
+      select(!!!facet_vars) |>
+      left_join(x = data, y = _, by = "PANEL")
+
+    xvar <- rlang::as_name(rlang::quo_get_expr(mapping$x))
+    yvar <- rlang::as_name(rlang::quo_get_expr(mapping$y))
+
+    vars <- names(model$model) #Identify col names from model
+    oldnames <- names(data) #Identify & save names from ggplot data
+
+    names(data)[1:2] <- c(xvar,yvar)
+    othervars <- setdiff(vars,c(xvar,yvar,facet_vars))
+
+    for (var in othervars){
+      if (!var %in% names(data)) {
+        data[[var]] <- get_default_value(model, var)
+      }
+    }
+
+
+    data$month <- as.numeric(data$month) #HARDCODED: Adjust class of facet variable as needed
+
+    tmp <- predict(model, newdata = data) #Predict new y col for displaying the model
+    names(data)<- oldnames #Revert col names to old names
+
+    data$y<- tmp
+
+    data
+  }
+  )
+
+GeomSlice <- ggproto(
+  'GeomSlice',
+  GeomLine,
+  default_aes = aes(
+    color = "skyblue",
+    linewidth = 1,
+    linetype = "solid",
+    alpha = 1)
+)
+
+geom_slice <- function(
+    model,
+    n = 100,
+    inherit.aes = TRUE,
+    ...
+    )
+  {
+  my_layer <- layer(
+    stat = StatSlice,
+    geom = GeomSlice,
+    position = 'identity',
+    inherit.aes = inherit.aes,
+    params = list(model = model, n = n,...)
+  )
+
+  ggproto(
+    NULL, my_layer,
+    compute_statistic = function(self, data, layout){
+      params <- self$stat$setup_params(data, self$stat_params)
+      self$computed_stat_params <- params[['mapping']] <- self$computed_mapping
+
+      data <- self$stat$setup_data(data,params)
+
+      self$stat$compute_layer(data,params,layout)
+
+    }
+  )
+}
+
+model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
+
+b <- coef(model)
+
+ggplot(Utilities, aes(x=temp,
+                      y=totalbill))+
+  geom_point()+
+  facet_wrap(~month)+
+  geom_slice(model=model)

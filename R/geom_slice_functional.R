@@ -1,9 +1,6 @@
 
 library(mosaic)
 
-model <- lm(totalbill ~ temp + month + temp:month, Utilities)
-
-
 compute_group_slice = function(data, scales, model,xaxis,facet, n = 100, ...) {
 
   vars <- names(model$model) #Identify col names from model
@@ -15,15 +12,35 @@ compute_group_slice = function(data, scales, model,xaxis,facet, n = 100, ...) {
   tmp <- predict(model, newdata = data) #Predict new y col for displaying the model
   names(data)<- oldnames #Revert col names to old names
   data$y<- tmp
-
   data
+
 }
 
 StatSlice <- ggproto(
   "StatSlice",
   Stat,
   required_aes = c('x','y'),
-  compute_group = compute_group_slice)
+  setup_data = function(self, data, params){
+    print(params$mapping)
+    data
+  },
+  compute_layer = function(self, data, params, layout){
+    params$facet_layout <- layout$layout
+    ggproto_parent(Stat,self)$compute_layer(data,params,layout)
+  },
+  compute_panel = function(data, scales, facet_layout){
+    facet_vars <- setdiff(names(facet_layout),
+                          c("ROW",'COL', "SCALE_X", "SCALE_Y", "COORD")
+                          )
+
+    data <- facet_layout |>
+      select(!!!facet_vars) |>
+      left_join(x = data, y = _, by = "PANEL")
+    print(head(data))
+    data
+  },
+  compute_group = compute_group_slice
+  )
 
 
 GeomSlice <- ggproto(
@@ -34,13 +51,11 @@ GeomSlice <- ggproto(
     linewidth = 1,
     linetype = "solid",
     alpha = 1)
-                     )
-
+)
 
 geom_slice <- function(
     model,
     xaxis = NULL,
-    facet=NULL,
     n = 100,
     inherit.aes = TRUE, ...){
   layer(
@@ -48,14 +63,16 @@ geom_slice <- function(
     geom = GeomSlice,
     position = 'identity',
     inherit.aes = inherit.aes,
-    params = list(model = model, xaxis = xaxis, facet=facet,n = n, ...)
+    params = list(model = model, xaxis = xaxis, n = n,...)
   )
 }
 
+model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
+
 b <- coef(model)
 
-p <- ggplot(Utilities, aes(x=temp,
+ggplot(Utilities, aes(x=temp,
                       y=totalbill))+
   geom_point()+
   facet_wrap(~month)+
-  geom_slice(model=model,xaxis = 'temp', facet='month')
+  geom_slice(model=model,xaxis = 'temp')

@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' model <- lm(width ~ length + sex, data = KidsFeet)
-#' scatter_3d(model, colors=c('blue','yellow')
+#' scatter_3d(model, colors=c('blue','yellow'))
 scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){
 
   if (!inherits(model, 'lm'))
@@ -31,15 +31,15 @@ scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){
 
   df <- setNames(data.frame(y,x1,x2), c(y_name, x1_name, x2_name))
 
-  if (!is.numeric(x1))
-    if (!is.factor(x1))
-      x1 <- as.factor(x1)
+  if (!is.numeric(x1)) {
+    if (!is.factor(x1)) x1 <- as.factor(x1)
     x1 <- as.numeric(x1)
+  }
 
-  if (!is.numeric(x2))
-      if (!is.factor(x2))
-        x2 <- as.factor(x2)
+  if (!is.numeric(x2)) {
+    if (!is.factor(x2)) x2 <- as.factor(x2)
     x2 <- as.numeric(x2)
+  }
 
 
   axisx <- seq(min(x1), max(x1), length.out=n)
@@ -72,7 +72,11 @@ scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){
     "add_trace(z=surface,",
               "x=axisx,",
               "y=axisy,",
-              "type='surface')")))
+              "type='surface',",
+              "opacity = 0.6)")))
 
 
 }
+
+model <- lm(width ~ length + birthmonth, data = KidsFeet)
+scatter_3d(model, colors=c('blue','yellow'))

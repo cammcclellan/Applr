@@ -49,13 +49,21 @@ lm_latex <- function(model){
 
   x_nums <- paste0('X_{',seq_along(model_vars),'i}')
   x_under <- paste0("\\underbrace{", x_nums, "}_{\\text{", model_vars, "}}")
-  x_terms <- paste0(model_coef, '*', x_under, collapse = ' + ')
+  x_terms <- paste0(model_coef,x_under, collapse = ' + ')
   x_terms <- gsub("\\+ -", "- ", x_terms)
 
-  respon <- paste0('\\underbrace{\\hat{Y_i}}_{\\text{',model_y,'}}')
+  respon <- paste0('\\underbrace{\\hat{Y_i}}_{\\text{Pred. ',model_y,'}}')
 
-  lat_equat <- paste0('$$',respon, ' = ',model_intercept, x_terms,'$$')
+  lat_equat <- paste0('$$',respon, ' = ',model_intercept, ' + ', x_terms,'$$')
 
   cat(lat_equat)
 }
 
+library(mosaic)
+
+model <- lm(width ~ length + sex + domhand, KidsFeet)
+b <- coef(model)
+b
+lm_equation(model)
+
+lm_latex(model)
