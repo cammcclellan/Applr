@@ -12,13 +12,14 @@ StatSlice <- ggproto(
     fdata <- model$model[[varname]]
 
     if (is.numeric(fdata)) {
-      return(mean(fdata, na.rm = TRUE))
+      mean(fdata, na.rm = TRUE)
     } else if (is.factor(fdata) || is.character(fdata)) {
       freq <- table(fdata)
 
       val <- names(freq)[which.max(freq)]
-      if (is.factor(fdata)) val <- factor(val, levels = levels(fdata))
-      return(val)
+      if (is.factor(fdata))
+        val <- factor(val, levels = levels(fdata))
+      val
     } else {
       stop("Unsupported column type: ", class(data))
     }
@@ -28,7 +29,8 @@ StatSlice <- ggproto(
     mapping <- params$mapping
     ggproto_parent(Stat,self)$compute_layer(data,params,layout)
   },
-  compute_panel = function(data, scales, facet_layout, model, params,mapping, n=100){
+  compute_panel = function(data, scales, params, n = 100,facet_layout,predict_vars, model, mapping) {
+
     facet_vars <- setdiff(names(facet_layout),
                           c("ROW",'COL', "SCALE_X", "SCALE_Y", "COORD"))
 
@@ -45,20 +47,33 @@ StatSlice <- ggproto(
     names(data)[1:2] <- c(xvar,yvar)
     othervars <- setdiff(vars,c(xvar,yvar,facet_vars))
 
-    for (var in othervars){
-      if (!var %in% names(data)) {
-        data[[var]] <- get_default_value(model, var)
+    for (var in othervars) {
+        if (!is.null(predict_vars[[var]])) {
+          data[[var]] <- predict_vars[[var]]
+        } else {
+          data[[var]] <- StatSlice$get_default_value(model, var)
+        }
+      }
+
+    for (facet_var in facet_vars) {
+      model_class <- class(model$model[[facet_var]])
+      if ("factor" %in% model_class) {
+        data[[facet_var]] <- factor(data[[facet_var]], levels = levels(model$model[[facet_var]]))
+      } else if ("character" %in% model_class) {
+        data[[facet_var]] <- as.character(data[[facet_var]])
+      } else if ("numeric" %in% model_class) {
+        data[[facet_var]] <- as.numeric(data[[facet_var]])
+      } else if ("integer" %in% model_class) {
+        data[[facet_var]] <- as.integer(data[[facet_var]])
       }
     }
 
 
-    data$month <- as.numeric(data$month) #HARDCODED: Adjust class of facet variable as needed
-
     tmp <- predict(model, newdata = data) #Predict new y col for displaying the model
-    names(data)<- oldnames #Revert col names to old names
+
+    names(data)<- c(oldnames,othervars) #Revert col names to old names
 
     data$y<- tmp
-
     data
   }
   )
@@ -77,6 +92,7 @@ geom_slice <- function(
     model,
     n = 100,
     inherit.aes = TRUE,
+    predict_vars = list(),
     ...
     )
   {
@@ -85,7 +101,7 @@ geom_slice <- function(
     geom = GeomSlice,
     position = 'identity',
     inherit.aes = inherit.aes,
-    params = list(model = model, n = n,...)
+    params = list(model = model,predict_vars = predict_vars, n = n,...)
   )
 
   ggproto(
