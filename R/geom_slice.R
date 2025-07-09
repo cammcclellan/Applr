@@ -1,6 +1,28 @@
 
-library(mosaic)
-
+#' StatSlice
+#'
+#' A custom 'ggproto' object designed to take a high dimensional model,
+#' pull the aesthetics from the global environment, and then create predictions
+#' to display a slice of the high dimensional model.
+#'
+#' @format An object of class \code{ggproto}, inheriting from \code{Stat}
+#'
+#' @section Parameters:
+#' \describe{
+#' \item{model}{A fitted linear model object from 'lm()'}
+#' \item{predict_vars}{A list of specified variables and values that specify the displayed slice}
+#' \item{n}{The number of predicted points generated}
+#' }
+#'
+#' @section Internal Methods:
+#' \describe{
+#' \item{get_default_value}{An internal function that determines the mean of numeric columns or most common factor in fator/character columns and holds that value constant}
+#' \item{compute_panel}{Generates prediction data with for each facet of a 'ggplot' graph}
+#'
+#' @seealso \code{\link[ggplot2]{Stat}}
+#' }
+#'
+#' @export
 StatSlice <- ggproto(
   "StatSlice",
   StatIdentity,
@@ -78,6 +100,14 @@ StatSlice <- ggproto(
   }
   )
 
+#'GeomSlice
+#'
+#'A custom 'ggproto' object that provides the graphing aesthetics
+#'for the 'StatSlice' object
+#'
+#'@seealso \code{\link[ggplot2]{GeomLine}}
+#'
+#'@export
 GeomSlice <- ggproto(
   'GeomSlice',
   GeomLine,
@@ -88,6 +118,34 @@ GeomSlice <- ggproto(
     alpha = 1)
 )
 
+#' Geom_slice
+#'
+#' A 'ggplot' layer that takes a high dimensional model and displays the predicted
+#' model across each facet of a graph
+#'
+#' @param model A linear model provided by 'lm()'
+#' @param n The number of predicted points across the graph - default 100
+#' @param inherit.aes Inherits the aes provided by 'ggplot' object
+#' @param predict_vars A list of specified variables and values that specify the slice - not required
+#' @param ... Other variables (color, alpha, etc.)
+#'
+#' @returns A ggplot layer that displays the slice of the high dimensional model
+#' @examples
+#' # Example: Using geom_slice without specifying 'predict_vars'
+#' model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
+#' ggplot(Utilities, aes(x=temp,y=totalbill))+
+#' geom_point()+
+#' facet_wrap(~month)+
+#' geom_slice(model=model)
+#'
+#' # Example: Using geom_slice with 'predict_vars'
+#' model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
+#' ggplot(Utilities, aes(x=temp, y=totalbill))+
+#' geom_point()+
+#' facet_wrap(~month)+
+#' geom_slice(model=model, predict_vars=list(billingDays=30,kwh=580))
+#'
+#' @export
 geom_slice <- function(
     model,
     n = 100,
@@ -117,13 +175,3 @@ geom_slice <- function(
     }
   )
 }
-
-model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
-
-b <- coef(model)
-
-ggplot(Utilities, aes(x=temp,
-                      y=totalbill))+
-  geom_point()+
-  facet_wrap(~month)+
-  geom_slice(model=model)
