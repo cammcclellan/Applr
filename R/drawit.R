@@ -1,4 +1,23 @@
 
+#' Draw It function
+#'
+#' A function to draw singular slices of a model in base R
+#'
+#' @param model A linear model using lm()
+#' @param xaxis The xaxis of the plot and primary explanatory variable
+#' @param ... Remaing variables; will throw warnings if not properly declared
+#' @param col Color of the line
+#' @param lty Line type
+#'
+#' @returns A slice of a linear model in a base R plot
+#'
+#'
+#' @examples
+#' model <- lm(width ~ length + sex + birthmonth, KidsFeet)
+#' plot(width ~ length, KidsFeet)
+#' drawit(model = mode, xaxis = 'length',sex = 'B',birthmonth = 6, col='blue',lty=1)
+#'
+#' @export
 drawit <- function(model,
                    xaxis,
                    ...,
