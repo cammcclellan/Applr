@@ -54,9 +54,3 @@ drawit <- function(model,
     eval(parse(text=curvecode))
   }
 }
-
-model <- lm(width ~ length + sex + birthyear + birthmonth, KidsFeet)
-xaxis = 'length'
-plot(width ~ length, KidsFeet)
-drawit(model = model, xaxis= 'length', birthyear = 88, birthmonth = 6, sex='G')
-drawit(model = model, xaxis= 'length', birthyear = 88, birthmonth = 6, sex='B', col='blue')

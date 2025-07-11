@@ -58,12 +58,3 @@ lm_latex <- function(model){
 
   cat(lat_equat)
 }
-
-library(mosaic)
-
-model <- lm(width ~ length + sex + domhand, KidsFeet)
-b <- coef(model)
-b
-lm_equation(model)
-
-lm_latex(model)
