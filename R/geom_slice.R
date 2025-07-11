@@ -78,15 +78,12 @@ StatSlice <- ggproto(
       }
 
     for (facet_var in facet_vars) {
-      model_class <- class(model$model[[facet_var]])
-      if ("factor" %in% model_class) {
+      if (is.factor(model$model[[facet_var]])) {
         data[[facet_var]] <- factor(data[[facet_var]], levels = levels(model$model[[facet_var]]))
-      } else if ("character" %in% model_class) {
+      } else if (is.character(model$model[[facet_var]])) {
         data[[facet_var]] <- as.character(data[[facet_var]])
-      } else if ("numeric" %in% model_class) {
+      } else if (is.numeric(model$model[[facet_var]])) {
         data[[facet_var]] <- as.numeric(data[[facet_var]])
-      } else if ("integer" %in% model_class) {
-        data[[facet_var]] <- as.integer(data[[facet_var]])
       }
     }
 
