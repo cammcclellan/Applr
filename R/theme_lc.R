@@ -25,9 +25,3 @@ theme_lc <- function(){
     complete=TRUE
   )
 }
-
-ggplot(KidsFeet, aes(x=length,
-                     y=width))+
-  geom_point()+
-  geom_smooth(method='lm', formula = y~x, se=T)+
-  theme_lc()
