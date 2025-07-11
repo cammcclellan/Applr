@@ -21,6 +21,7 @@
 #'
 #' @seealso \code{\link[ggplot2]{Stat}}
 #' }
+#' @import ggplot2
 #'
 #' @export
 StatSlice <- ggproto(

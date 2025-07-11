@@ -1,3 +1,4 @@
+
 #' Plot a 3D-grapheable linear model
 #'
 #' @param model A saved linear model with 2 predictor variables
@@ -5,11 +6,16 @@
 #' @param colors Colors used for the gradient scale
 #'
 #' @returns A 3D graph in the viewer section
-#' @export
+#'
 #'
 #' @examples
-#' model <- lm(width ~ length + sex, data = KidsFeet)
+#' model <- lm(width ~ length + birthmonth, data = KidsFeet)
 #' scatter_3d(model, colors=c('blue','yellow'))
+#'
+#' @importFrom tidyr pivot_wider
+#' @importFrom plotly plot_ly add_markers add_trace
+#'
+#' @export
 scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){
 
   if (!inherits(model, 'lm'))
@@ -56,9 +62,14 @@ scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){
 
   surface$Z <- predict.lm(model, newdata = surface)
 
-  formula = paste(x2_name, "~", x1_name)
+  widesurface <- pivot_wider(
+    surface,
+    names_from = !!sym(x1_name),
+    values_from = Z
+  )
 
-  surface <- acast(surface, formula, value.var = 'Z')
+  surface <- as.matrix(widesurface[,-1])
+  rownames(surface) <- widesurface[[x2_name]]
 
 
   eval(parse(text=paste0("plot_ly() %>%",
@@ -77,6 +88,3 @@ scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){
 
 
 }
-
-model <- lm(width ~ length + birthmonth, data = KidsFeet)
-scatter_3d(model, colors=c('blue','yellow'))

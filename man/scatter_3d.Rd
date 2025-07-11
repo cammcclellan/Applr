@@ -7,13 +7,11 @@
 scatter_3d(model, n = 100, colors = c("blue", "yellow"))
 }
 \arguments{
-\item{model}{A saved linear model
-Ex. df <- lm(y ~ x + x2, data)}
+\item{model}{A saved linear model with 2 predictor variables}
 
 \item{n}{Number of evaluations}
 
-\item{colors}{Colors used for the gradient scale
-colors = c(color1, color2, etc.)}
+\item{colors}{Colors used for the gradient scale}
 }
 \value{
 A 3D graph in the viewer section
@@ -22,6 +20,7 @@ A 3D graph in the viewer section
 Plot a 3D-grapheable linear model
 }
 \examples{
-model <- lm(width ~ length + sex, data = KidsFeet)
-scatter_3d(model, colors=c('blue','yellow')
+model <- lm(width ~ length + birthmonth, data = KidsFeet)
+scatter_3d(model, colors=c('blue','yellow'))
+
 }

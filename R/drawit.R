@@ -1,7 +1,9 @@
 
 drawit <- function(model,
                    xaxis,
-                   ...){
+                   ...,
+                   col='black',
+                   lty=1){
   setvars <- list(...)
   fullmodel <- model$model
   varsnames <- names(model$model)[-1]
@@ -14,34 +16,41 @@ drawit <- function(model,
   curveequat <- paste0('b[',1:numb,']*',nameb, collapse = ' + ')
   clean_curveequat <- gsub('\\*\\(Intercept\\)', '', curveequat)
 
-  curvecode <- paste0('curve(',clean_curveequat,', add = TRUE, xname =\"',xaxis,'\")')
+  curvecode <- paste0('curve(',clean_curveequat,', add = TRUE, xname =\"',xaxis,'\", col = \"', col,'\", lty =',lty,')')
 
   flag = FALSE
 
   for (name in clean_varsnames){
-    if (is.numeric(model$model[[name]])){
+
+    if (is.numeric(fullmodel[[name]])){
       namerange <- range(model$model[[name]])
-      if (!name %in% setvars){
+      if (!name %in% names(setvars)){
         warning(paste0(name,' value not specified; enter value between:',namerange[1],'-',namerange[2]))
         flag = TRUE
+      }
+      else{
+        assign(name, setvars[[name]])
       }
     }
     else if (is.factor(model$model[[name]])| is.character(model$model[[name]])){
       namelevels <- levels(model$model[[name]])
       levelslen <- length(namelevels)
-      if(!name %in% setvars){
+      if(!name %in% names(setvars)){
         warning(paste0(name,' value not specified; enter value as one of the following: ',paste0('\"',namelevels,'\"', collapse = ',')))
         flag = TRUE
+      }
+      else{
+        selected_level <- as.character((setvars[[name]]))
+        dummyvars <- grep(name,names(b),value=TRUE)
+
+        for (dummy in dummyvars){
+          dummylevel <- sub(name,'',dummy)
+          assign(dummy, as.numeric(dummylevel == selected_level))
+        }
       }
     }
   }
   if (!flag){
-    coef_names <- names(b)
-    fact_vars <- sapply(model$model,is.character)
-    fact_vars <- sapply(model$model,is.factor)
-
-
-
     eval(parse(text=curvecode))
   }
 }
@@ -49,4 +58,5 @@ drawit <- function(model,
 model <- lm(width ~ length + sex + birthyear + birthmonth, KidsFeet)
 xaxis = 'length'
 plot(width ~ length, KidsFeet)
-drawit(model = model, xaxis= 'length')
+drawit(model = model, xaxis= 'length', birthyear = 88, birthmonth = 6, sex='G')
+drawit(model = model, xaxis= 'length', birthyear = 88, birthmonth = 6, sex='B', col='blue')
