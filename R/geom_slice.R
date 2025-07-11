@@ -18,10 +18,10 @@
 #' \describe{
 #' \item{get_default_value}{An internal function that determines the mean of numeric columns or most common factor in fator/character columns and holds that value constant}
 #' \item{compute_panel}{Generates prediction data with for each facet of a 'ggplot' graph}
-#'
-#' @seealso \code{\link[ggplot2]{Stat}}
 #' }
+#'
 #' @import ggplot2
+#' @import rlang
 #'
 #' @export
 StatSlice <- ggproto(
@@ -103,8 +103,6 @@ StatSlice <- ggproto(
 #'A custom 'ggproto' object that provides the graphing aesthetics
 #'for the 'StatSlice' object
 #'
-#'@seealso \code{\link[ggplot2]{GeomLine}}
-#'
 #'@export
 GeomSlice <- ggproto(
   'GeomSlice',
@@ -129,19 +127,21 @@ GeomSlice <- ggproto(
 #'
 #' @returns A ggplot layer that displays the slice of the high dimensional model
 #' @examples
+#' \dontrun{
 #' # Example: Using geom_slice without specifying 'predict_vars'
-#' model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
-#' ggplot(Utilities, aes(x=temp,y=totalbill))+
+#' model <- lm(mpg ~ disp + hp, data = mtcars)
+#' ggplot(mtcars, aes(x=disp,y=mpg))+
 #' geom_point()+
-#' facet_wrap(~month)+
+#' facet_wrap(~hp)+
 #' geom_slice(model=model)
 #'
 #' # Example: Using geom_slice with 'predict_vars'
-#' model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
-#' ggplot(Utilities, aes(x=temp, y=totalbill))+
+#' model <- lm(mpg ~ disp + hp + gear, data = mtcars)
+#' ggplot(mtcars, aes(x=disp, y=mpg))+
 #' geom_point()+
-#' facet_wrap(~month)+
-#' geom_slice(model=model, predict_vars=list(billingDays=30,kwh=580))
+#' facet_wrap(~hp)+
+#' geom_slice(model=model, predict_vars=list(gear=4))
+#'}
 #'
 #' @export
 geom_slice <- function(

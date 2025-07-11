@@ -16,7 +16,9 @@ The equation of an indicated linear model with coefficients and variable names
 Write out the equation of a linear model
 }
 \examples{
-model <- lm(width ~ length + I(length^2) + sex + sex:length + sex:I(length^2), KidsFeet)
+\dontrun{
+model <- lm(mpg ~ disp + hp, data = mtcars)
 lm_equation(model)
+}
 
 }

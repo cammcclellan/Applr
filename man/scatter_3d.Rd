@@ -20,7 +20,9 @@ A 3D graph in the viewer section
 Plot a 3D-grapheable linear model
 }
 \examples{
-model <- lm(width ~ length + birthmonth, data = KidsFeet)
+\dontrun{
+model <- lm(mpg ~ disp + hp, data = mtcars)
 scatter_3d(model, colors=c('blue','yellow'))
+}
 
 }

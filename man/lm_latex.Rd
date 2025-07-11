@@ -16,7 +16,9 @@ The equation of an indicated linear model with coefficients and variable names i
 Write out the equation of a linear model in LaTeX format
 }
 \examples{
+\dontrun{
 model <- lm(width ~ length + I(length^2) + sex + sex:length + sex:I(length^2), KidsFeet)
 lm_latex(model)
+}
 
 }

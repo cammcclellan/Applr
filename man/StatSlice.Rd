@@ -30,9 +30,6 @@ to display a slice of the high dimensional model.
 \item{get_default_value}{An internal function that determines the mean of numeric columns or most common factor in fator/character columns and holds that value constant}
 \item{compute_panel}{Generates prediction data with for each facet of a 'ggplot' graph}
 }
+}
 
-\seealso{
-\code{\link[ggplot2]{Stat}}
-}
-}
 \keyword{datasets}

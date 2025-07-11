@@ -11,11 +11,15 @@
 #'
 #' @returns A slice of a linear model in a base R plot
 #'
-#'
 #' @examples
-#' model <- lm(width ~ length + sex + birthmonth, KidsFeet)
-#' plot(width ~ length, KidsFeet)
-#' drawit(model = mode, xaxis = 'length',sex = 'B',birthmonth = 6, col='blue',lty=1)
+#' \dontrun{
+#' model <- lm(mpg ~ wt + am + qsec, mtcars)
+#' plot(mpg ~ wt, mtcars)
+#' drawit(model = model, xaxis = 'wt',am = 1,qsec = 17, col='blue',lty=1)
+#' }
+#'
+#' @importFrom graphics lines
+#' @importFrom stats coef predict terms setNames formula predict.lm
 #'
 #' @export
 drawit <- function(model,

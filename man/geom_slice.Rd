@@ -25,18 +25,20 @@ A 'ggplot' layer that takes a high dimensional model and displays the predicted
 model across each facet of a graph
 }
 \examples{
+\dontrun{
 # Example: Using geom_slice without specifying 'predict_vars'
-model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
-ggplot(Utilities, aes(x=temp,y=totalbill))+
+model <- lm(mpg ~ disp + hp, data = mtcars)
+ggplot(mtcars, aes(x=disp,y=mpg))+
 geom_point()+
-facet_wrap(~month)+
+facet_wrap(~hp)+
 geom_slice(model=model)
 
 # Example: Using geom_slice with 'predict_vars'
-model <- lm(totalbill ~ temp + month + temp:month + kwh + billingDays, Utilities)
-ggplot(Utilities, aes(x=temp, y=totalbill))+
+model <- lm(mpg ~ disp + hp + gear, data = mtcars)
+ggplot(mtcars, aes(x=disp, y=mpg))+
 geom_point()+
-facet_wrap(~month)+
-geom_slice(model=model, predict_vars=list(billingDays=30,kwh=580))
+facet_wrap(~hp)+
+geom_slice(model=model, predict_vars=list(gear=4))
+}
 
 }

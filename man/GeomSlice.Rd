@@ -14,7 +14,4 @@ GeomSlice
 A custom 'ggproto' object that provides the graphing aesthetics
 for the 'StatSlice' object
 }
-\seealso{
-\code{\link[ggplot2]{GeomLine}}
-}
 \keyword{datasets}

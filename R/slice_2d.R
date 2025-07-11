@@ -5,13 +5,18 @@
 #' @param model A linear model
 #' @param xaxis A non-required specification of the xaxis variable; default is first x var in lm
 #' @param n Number of displayed points; default is 100
-#' @param ...
+#' @param ... Remaining vars (color, linetype, etc.)
 #'
 #' @returns A 2D graph of a sliced model
 #'
+#' @importFrom graphics lines
+#' @importFrom stats coef predict terms setNames formula predict.lm
+#'
 #' @examples
-#' model = lm(width ~ length, KidsFeet)
-#' slice_2d(model)
+#' \dontrun{
+#' model <- lm(mpg ~ disp, data = mtcars)
+#' slice_2d(model, xaxis = 'disp')
+#' }
 #'
 #' @export
 slice_2d <- function(model,xaxis=NA,n=100, ...){
@@ -81,15 +86,19 @@ slice_2d <- function(model,xaxis=NA,n=100, ...){
 #' @param model A linear model
 #' @param xaxis A non-required specification of the xaxis variable; default is first x var in lm
 #' @param n Number of displayed points; default is 100
-#' @param ...
+#' @param ... Remaining vars (color, linetype, etc.)
 #'
 #' @returns A line added to a preexisting R plot displaying a 2D graphable slice of an HD model
 #'
+#' @importFrom graphics lines
+#' @importFrom stats coef predict terms setNames formula predict.lm
 #'
 #' @examples
-#' kids <- lm(width ~ length + birthmonth, data = KidsFeet)
-#' plot(width ~ length, data = KidsFeet)
-#' add_slice_2d(kids)
+#' \dontrun{
+#' model <- lm(mpg ~ disp + hp, data = mtcars)
+#' plot(mpg ~ disp, data = mtcars)
+#' add_slice_2d(model,xaxis='disp', hp=100)
+#' }
 #'
 #' @export
 add_slice_2d <- function(model,xaxis=NA,n=100, ...){

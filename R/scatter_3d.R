@@ -9,11 +9,15 @@
 #'
 #'
 #' @examples
-#' model <- lm(width ~ length + birthmonth, data = KidsFeet)
+#' \dontrun{
+#' model <- lm(mpg ~ disp + hp, data = mtcars)
 #' scatter_3d(model, colors=c('blue','yellow'))
+#' }
 #'
 #' @importFrom tidyr pivot_wider
 #' @importFrom plotly plot_ly add_markers add_trace
+#' @importFrom graphics lines
+#' @importFrom stats coef predict terms setNames formula predict.lm
 #'
 #' @export
 scatter_3d <- function(model, n=100, colors = c('blue', 'yellow')){

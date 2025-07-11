@@ -6,8 +6,13 @@
 #' The equation of an indicated linear model with coefficients and variable names
 #'
 #' @examples
-#' model <- lm(width ~ length + I(length^2) + sex + sex:length + sex:I(length^2), KidsFeet)
+#'\dontrun{
+#' model <- lm(mpg ~ disp + hp, data = mtcars)
 #' lm_equation(model)
+#'}
+#'
+#' @importFrom graphics lines
+#' @importFrom stats terms
 #'
 #' @export
 lm_equation <- function(model){
@@ -35,8 +40,13 @@ model_equation
 #' The equation of an indicated linear model with coefficients and variable names in LaTeX form
 #'
 #' @examples
+#' \dontrun{
 #' model <- lm(width ~ length + I(length^2) + sex + sex:length + sex:I(length^2), KidsFeet)
 #' lm_latex(model)
+#' }
+#'
+#' @importFrom graphics lines
+#' @importFrom stats coef predict terms setNames formula predict.lm
 #'
 #' @export
 lm_latex <- function(model){

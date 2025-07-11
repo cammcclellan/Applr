@@ -13,7 +13,7 @@ slice_2d(model, xaxis = NA, n = 100, ...)
 
 \item{n}{Number of displayed points; default is 100}
 
-\item{...}{}
+\item{...}{Remaining vars (color, linetype, etc.)}
 }
 \value{
 A 2D graph of a sliced model
@@ -22,7 +22,9 @@ A 2D graph of a sliced model
 Take a linear model and display a 2D slice in base R
 }
 \examples{
-model = lm(width ~ length, KidsFeet)
-slice_2d(model)
+\dontrun{
+model <- lm(mpg ~ disp, data = mtcars)
+slice_2d(model, xaxis = 'disp')
+}
 
 }
