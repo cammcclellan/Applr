@@ -74,7 +74,7 @@ slice_2d <- function(model,xaxis=NA,n=100, ...){
        xlab = xaxis,
        ylab = paste("Predicted", y_name))
 
-  lines(new_data[[xaxis]],new_data$preds)
+  lines(new_data[[xaxis]],new_data$preds,...)
 
 }
 
@@ -152,7 +152,7 @@ add_slice_2d <- function(model,xaxis=NA,n=100, ...){
 
   new_data$preds <- predict(model, newdata = new_data)
 
-  lines(new_data[[xaxis]],new_data$preds)
+  lines(new_data[[xaxis]],new_data$preds,...)
 
 }
 
